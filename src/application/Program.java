@@ -4,24 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import project.Freight;
+import project.User;
 import project.VehicleType;
 
 public class Program {
 	
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
         List<Freight> Freights = new ArrayList<>();
 
         // Criar Frete
-        Freight frete1 = Freight.createShipping(Freights, "1", 10, 50, "Caminhonete");
+        @SuppressWarnings("unused")
+		Freight frete1 = Freight.createShipping(Freights, "1", 10, 50, "Caminhonete");
         Freight frete2 = Freight.createShipping(Freights, "2", 20, 150, "Furgão");
 
         // Ler Frete
-        Freight found = Freight.readShipping(Freights, "1");
-        System.out.println("Frete encontrado: " + found.getValueShipping());
+        Freight foundFreight = Freight.readShipping(Freights, "1");
+        System.out.println("Frete encontrado: " + foundFreight.getValueShipping());
 
         // Atualizar Frete
-        Freight updated = Freight.updateShipping(Freights, "2", 25, 180, "Caminhão");
-        System.out.println("Frete atualizado: " + updated.getValueShipping() + ", Valor Entregador: " + updated.getValueDelivery());
+        Freight updatedFreight = Freight.updateShipping(Freights, "2", 25, 180, "Caminhão");
+        System.out.println("Frete atualizado: " + updatedFreight.getValueShipping() + ", Valor Entregador: " + updatedFreight.getValueDelivery());
 
         // Deletar Frete
         Freight.deleteShipping(Freights, "1");
@@ -53,6 +56,23 @@ public class Program {
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());  // Veículo não encontrado!
         }
+        
+        List<User> users = new ArrayList<>();
+
+        // Criar um novo usuário
+        User usuario1 = User.createUser(users, "1", "João", "joao@example.com", "senha123");
+
+        // Ler um usuário
+        User foundUser = User.readUser(users, "1");
+        System.out.println("Usuário encontrado: " + foundUser.getName());
+
+        // Atualizar um usuário
+        User updatedUser = User.updateUser(users, "1", "João da Silva", "joao.silva@example.com", "novaSenha123");
+        System.out.println("Usuário atualizado: " + updatedUser.getName());
+
+        // Deletar um usuário
+        User.deleteUser(users, "1");
+        System.out.println("Usuário com id '1' deletado.");
         
     }
 }
