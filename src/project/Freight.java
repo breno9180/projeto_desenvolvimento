@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Freight {
 	private String id;
-	private double distance;
+	private double distanceKm;
     private double weight;
     private String typeVehicle;
     private double baseValue;
@@ -12,13 +12,13 @@ public class Freight {
     private double valueShipping;
     private double valueDelivery;
     
-    public Freight(String id,double distance, double weight, String typeVehicle) {
+    public Freight(String id,double distanceKm, double weight, String typeVehicle) {
         this.id = id;
-    	this.distance = distance;
+    	this.distanceKm = distanceKm;
         this.weight = weight;
         this.typeVehicle = typeVehicle;
-        this.baseValue = calculateBaseValue(weight, distance, typeVehicle);
-        this.rate = calculateRate(distance);
+        this.baseValue = calculateBaseValue(weight, distanceKm, typeVehicle);
+        this.rate = calculateRate();
         this.valueShipping = baseValue + rate;
         this.valueDelivery = valueShipping - rate;
     }
@@ -40,12 +40,12 @@ public class Freight {
     	updateValues();
     }
     
-    public double getDistance() {
-    	return distance;
+    public double getDistanceKm() {
+    	return distanceKm;
     }
     
-    public void setDistance(double distance) {
-    	this.distance = distance;
+    public void setDistanceKm(double distanceKm) {
+    	this.distanceKm = distanceKm;
     	updateValues();
     }
     
@@ -70,26 +70,26 @@ public class Freight {
     	return valueDelivery;
     }
     
-	private double calculateBaseValue(double weight, double distance, String typeVehicle) {
+	private double calculateBaseValue(double weight, double distanceKm, String typeVehicle) {
 		double weightVehicle = getWeightByVehicleType(typeVehicle);
-		return distance * weightVehicle;
+		return distanceKm * weightVehicle;
 	}
 	
-	private double calculateRate(double distance) {
-    	if (distance <= 100) {
-    			return baseValue * 0.20;
-    		} else if(distance <= 200){
-    			return baseValue * 0.15;
-    		} else if(distance <= 500){
-    			return baseValue * 0.10;
-    		} else{
-    			return baseValue * 0.075;
-    		}
+	public double calculateRate() {
+        if (distanceKm <= 100) {
+            return valueShipping * 0.20;
+        } else if (distanceKm <= 200) {
+            return valueShipping * 0.15;
+        } else if (distanceKm <= 500) {
+            return valueShipping * 0.10;
+        } else {
+            return valueShipping * 0.075;
+        }
     }
 	
 	private void updateValues() {
-		this.baseValue = calculateBaseValue(weight, distance, typeVehicle);
-		this.rate = calculateRate(distance);
+		this.baseValue = calculateBaseValue(weight, distanceKm, typeVehicle);
+		this.rate = calculateRate();
 		this.valueShipping = baseValue + rate;
 		this.valueShipping = valueShipping - rate;
 	}
@@ -126,7 +126,7 @@ public class Freight {
 	public static Freight updateShipping(List<Freight> freights, String id, double newWeight, double newDistance, String newTypeVehicle) {
 		Freight freight = readShipping(freights, id);
 		freight.setWeight(newWeight);
-		freight.setDistance(newDistance);
+		freight.setDistanceKm(newDistance);
 		freight.setTypeVehicles(newTypeVehicle);
 		return freight;
 	}

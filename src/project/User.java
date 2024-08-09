@@ -7,12 +7,14 @@ public class User {
     private String email;
     private String password;
     private String name;
+    private static UserProfile profile;
     
-    public User(String id, String email, String password, String name) {
+    public User(String id, String email, String password, String name, UserProfile profile) {
     	this.id = id;
     	this.email = email;
     	this.password = password;
     	this.name = name;
+    	User.profile = profile;
     }
     
     public String getId() {
@@ -47,11 +49,19 @@ public class User {
     	this.password = password;
     }
     
+    public UserProfile getProfile() {
+    	return profile;
+    }
+    
+    public void setProfile(UserProfile profile) {
+    	User.profile = profile;
+    }
+    
     public static User createUser(List<User> users, String id, String name, String email, String password) {
     	if(existingUser(users, email)) {
     		throw new IllegalArgumentException("User already registered with this email!");
     	}
-    	User newUser = new User(id, name, email, password);
+    	User newUser = new User(id, name, email, password, profile);
     	users.add(newUser);
     	return newUser;
     }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import project.Freight;
+import project.PostageShipping;
 import project.User;
 import project.VehicleType;
 
@@ -74,5 +75,15 @@ public class Program {
         User.deleteUser(users, "1");
         System.out.println("Usuário com id '1' deletado.");
         
+        
+        PostageShipping frete3 = new PostageShipping("1", "Entrega de móveis", "Caminhonete", 150, 5);
+
+        // Exibe os detalhes do frete
+        System.out.println(frete3.toString());
+
+        // Alterando a distância e recalculando os valores
+        frete3.setDistanceKm(300);
+        System.out.println("Após mudança de distância:");
+        System.out.println(frete3.toString());
     }
 }
