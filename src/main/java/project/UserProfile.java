@@ -5,21 +5,23 @@ import java.util.List;
 
 public class UserProfile {
 
-	private String id;
+	private int id;
     private String name;
+    private String type;
     private List<String> permissions;
     
-    public UserProfile(String id, String name) {
-    	this.id = id;
+    public UserProfile(int string, String name, String type) {
+    	this.id = string;
     	this.name = name;
+    	this.type = type;
     	this.permissions = new ArrayList<>();
     }
     
-    public String getId() {
+    public int getId() {
     	return id;
     }
     
-    public void setId(String id) {
+    public void setId(int id) {
     	this.id = id;
     }
     
@@ -29,6 +31,14 @@ public class UserProfile {
     
     public void setName(String name) {
     	this.name = name;
+    }
+    
+    public String getType() {
+        return type;
+    }
+    
+    public void setType(String type) {
+        this.type = type;
     }
     
     public List<String> getPermissions(){
@@ -49,23 +59,23 @@ public class UserProfile {
     	permissions.remove(permission);
     }
     
-    public static UserProfile createProfile(List<UserProfile> profiles, String id, String name) {
+    public static UserProfile createProfile(List<UserProfile> profiles, int id, String name, String role) {
     	if(profileExisting(profiles, name)) {
     		throw new IllegalArgumentException("Profile already registered with this name!");
     	}
-    	UserProfile newProfile = new UserProfile(id, name);
+    	UserProfile newProfile = new UserProfile(id, name, role);
     	profiles.add(newProfile);
     	return newProfile;
     }
     
-    public static UserProfile readProfile(List<UserProfile> profiles, String id) {
+    public static UserProfile readProfile(List<UserProfile> profiles, int id) {
     	return profiles.stream()
-    			.filter(profile -> profile.getId().equals(id))
+    			.filter(profile -> profile.getId() == id)
     			.findFirst()
     			.orElseThrow(()-> new IllegalArgumentException("Profile not found!"));
     }
     
-    public static UserProfile updateProfile(List<UserProfile> profiles, String id,String newName) {
+    public static UserProfile updateProfile(List<UserProfile> profiles, int id,String newName) {
     	UserProfile profile = readProfile(profiles, id);
 		if(!profile.getName().equals(newName) && profileExisting(profiles, newName)) {
     		throw new IllegalArgumentException("Another profile is already registered with this name!");
@@ -74,7 +84,7 @@ public class UserProfile {
     	return profile;
     }
     
-    public static void deleteProfile(List<UserProfile> profiles, String id) {
+    public static void deleteProfile(List<UserProfile> profiles, int id) {
     	UserProfile profile = readProfile(profiles, id);
     	profiles.remove(profile);
     }

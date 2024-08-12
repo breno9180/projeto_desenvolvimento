@@ -11,6 +11,7 @@ public class Freight {
     private double rate;
     private double valueShipping;
     private double valueDelivery;
+    private FreightStatus status;
     
     public Freight(String id,double distanceKm, double weight, String typeVehicle) {
         this.id = id;
@@ -21,6 +22,7 @@ public class Freight {
         this.rate = calculateRate();
         this.valueShipping = baseValue + rate;
         this.valueDelivery = valueShipping - rate;
+        this.status = FreightStatus.ACEITO;
     }
     
     public String getId() {
@@ -70,6 +72,14 @@ public class Freight {
     	return valueDelivery;
     }
     
+    public FreightStatus getStatus() {
+        return status;
+    }
+    
+    public void setStatus(FreightStatus status) {
+        this.status = status;
+    }
+    
 	private double calculateBaseValue(double weight, double distanceKm, String typeVehicle) {
 		double weightVehicle = getWeightByVehicleType(typeVehicle);
 		return distanceKm * weightVehicle;
@@ -87,30 +97,33 @@ public class Freight {
         }
     }
 	
-	private void updateValues() {
-		this.baseValue = calculateBaseValue(weight, distanceKm, typeVehicle);
-		this.rate = calculateRate();
-		this.valueShipping = baseValue + rate;
-		this.valueShipping = valueShipping - rate;
-	}
-	
 	private double getWeightByVehicleType(String typeVehicle) {
 		switch(typeVehicle.toLowerCase()) {
 		case "caminhonete":
 			return 5.0;
-		case "furgão":
+		case "furgï¿½o":
 			return 4.0;
-		case "caminhão":
+		case "caminhï¿½o":
 			return 10.0;
 		default:
 			throw new IllegalArgumentException("Invalid vehicle type!");
 		}
 	}
+	
+	private void updateValues() {
+		this.baseValue = calculateBaseValue(weight, distanceKm, typeVehicle);
+		this.rate = calculateRate();
+		this.valueShipping = baseValue + rate;
+		this.valueDelivery = valueShipping - rate;
+	}
+	
     
 	public static Freight createShipping(List<Freight> freights, String id, double weight, double distance, String typeVehicle) {
 		if (shippingExisting(freights, id)) {
 			throw new IllegalArgumentException("Shipping already registered!");
 		}
+		validateShippingData(weight, distance, typeVehicle);
+		
 		Freight newFreight = new Freight(id, weight, distance, typeVehicle);
 		freights.add(newFreight);
 		return newFreight;
@@ -135,6 +148,22 @@ public class Freight {
 		Freight freight = readShipping(freights, id);
 		freights.remove(freight);
 		return freight;
+	}
+	
+	public void updateStatus(FreightStatus newStatus) {
+        this.status = newStatus;
+    }
+	
+	private static void validateShippingData(double weight, double distance, String typeVehicle) {
+	    if (weight <= 0) {
+	        throw new IllegalArgumentException("Weight must be a positive value.");
+	    }
+	    if (distance <= 0) {
+	        throw new IllegalArgumentException("Distance must be a positive value.");
+	    }
+	    if (typeVehicle == null || typeVehicle.isEmpty()) {
+	        throw new IllegalArgumentException("Vehicle type must be provided.");
+	    }
 	}
 	
 	private static boolean shippingExisting(List<Freight> freights, String id) {

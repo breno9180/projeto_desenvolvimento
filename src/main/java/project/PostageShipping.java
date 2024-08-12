@@ -1,5 +1,7 @@
 package project;
 
+import project.Freight;
+
 public class PostageShipping {
 	private Freight freight;
 	private String id;
@@ -48,7 +50,8 @@ public class PostageShipping {
 
     public void setWeightCalculation(double weightCalculation) {
         this.weightCalculation = weightCalculation;
-        this.freight.new Freight(typeVehicle, freight.getDistanceKm(), weightCalculation);
+        this.freight.setWeight(weightCalculation);
+        this.freight.setTypeVehicles(typeVehicle);
         this.valueFinalDelivery = calculateFinalValueDelivery();
     }
     

@@ -3,25 +3,25 @@ package project;
 import java.util.List;
 
 public class User {
-    private String id;
+    private int id;
     private String email;
-    private String password;
+    private String passwordHash;
     private String name;
-    private static UserProfile profile;
+    private UserProfile profile;
     
-    public User(String id, String email, String password, String name, UserProfile profile) {
+    public User(int id, String email, String passwordHash, String name, UserProfile profile) {
     	this.id = id;
     	this.email = email;
-    	this.password = password;
+    	this.passwordHash = passwordHash;
     	this.name = name;
-    	User.profile = profile;
+    	this.profile = profile;
     }
     
-    public String getId() {
+    public int getId() {
     	return id;
     }
     
-    public void setId(String id) {
+    public void setId(int id) {
     	this.id = id;
     }
     
@@ -41,12 +41,12 @@ public class User {
     	this.email = email;
     }
     
-    public String getpassword() {
-    	return password;
+    public String getPasswordHash() {
+    	return passwordHash;
     }
     
-    public void setpassword(String password) {
-    	this.password = password;
+    public void setPasswordHash(String passwordHash) {
+    	this.passwordHash = passwordHash;
     }
     
     public UserProfile getProfile() {
@@ -54,14 +54,14 @@ public class User {
     }
     
     public void setProfile(UserProfile profile) {
-    	User.profile = profile;
+    	this.profile = profile;
     }
     
-    public static User createUser(List<User> users, String id, String name, String email, String password) {
+    public static User createUser(List<User> users, int id, String name, String email, String passwordHash, UserProfile profile) {
     	if(existingUser(users, email)) {
     		throw new IllegalArgumentException("User already registered with this email!");
     	}
-    	User newUser = new User(id, name, email, password, profile);
+    	User newUser = new User(id, name, email, passwordHash, profile);
     	users.add(newUser);
     	return newUser;
     }
@@ -80,7 +80,7 @@ public class User {
     	}
     	user.setName(newName);
     	user.setEmail(newEmail);
-    	user.setpassword(newPassword);
+    	user.setPasswordHash(newPassword);
     	return user;
     }
     
