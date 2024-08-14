@@ -4,7 +4,7 @@ import java.util.Set;
 
 public enum UserProfileType {
 	 ADMIN(Set.of("READ", "WRITE", "DELETE")),
-	    ENTREGADOR(Set.of("READ"));
+	    ENTREGADOR(Set.of("READ")), CLIENTE(Set.of("READ"));
 
 	    private final Set<String> permissions;
 

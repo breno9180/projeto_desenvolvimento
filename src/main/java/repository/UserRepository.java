@@ -24,21 +24,21 @@ public class UserRepository {
 
     // M�todo para criar um novo usu�rio
     public void createUser(User user) {
-        String sql = "INSERT INTO users (email, password_hash, name, profile_id) VALUES (?, ?, ?, ?)";
-
-        try (Connection conn = getConnection(); 
+        String sql = "INSERT INTO users (id, email, password_hash, profile_type_id, name) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, user.getEmail());
-            pstmt.setString(2, user.getPasswordHash());
-            pstmt.setString(3, user.getName());
-            pstmt.setInt(4, user.getProfile().getId()); // Referência ao perfil
+            pstmt.setInt(1, user.getId());
+            pstmt.setString(2, user.getEmail());
+            pstmt.setString(3, user.getPasswordHash());
+            pstmt.setInt(4, user.getProfile().getId()); // Usa profile_type_id
+            pstmt.setString(5, user.getName());
             pstmt.executeUpdate();
+            System.out.println("Usuário criado com sucesso!");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-    // M�todo para ler um usu�rio pelo ID
+    
     public User readUser(String id) {
         String sql = "SELECT * FROM users WHERE id = ?";
 
@@ -48,11 +48,8 @@ public class UserRepository {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                UserProfile profile = new UserProfile(
-                    rs.getInt("profile_id"),
-                    rs.getString("profile_name"),
-                    rs.getString("profile_type")
-                );
+                int profileTypeId = rs.getInt("profile_type_id");
+                UserProfile profile = getUserProfile(profileTypeId); // Obtendo perfil do banco de dados
 
                 return new User(
                     rs.getInt("id"),
@@ -72,15 +69,17 @@ public class UserRepository {
 
     // M�todo para atualizar um usu�rio
     public void updateUser(User user) {
-        String sql = "UPDATE users SET email = ?, password_hash = ?, name = ?, profile = ? WHERE id = ?";
-        
-        try (Connection conn = getConnection(); 
+        String sql = "UPDATE users SET email = ?, password_hash = ?, name = ?, profile_type_id = ? WHERE id = ?";
+
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, user.getEmail());
             pstmt.setString(2, user.getPasswordHash());
             pstmt.setString(3, user.getName());
-            pstmt.setString(4, user.getProfile().name()); // Armazenando o nome do enum como String
-            pstmt.setInt(5, user.getId()); // Ajuste para o tipo de ID
+            pstmt.setInt(4, user.getProfile().getId()); // Usa profile_type_id
+            pstmt.setInt(5, user.getId());
+
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -100,26 +99,48 @@ public class UserRepository {
         }
     }
     
-    public UserProfile getUserProfile(int profileId) {
+    public UserProfile getUserProfile(int profileTypeId) {
         String sql = "SELECT * FROM user_profiles WHERE id = ?";
-
-        try (Connection conn = getConnection(); 
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, profileId);
+            pstmt.setInt(1, profileTypeId);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
                 String name = rs.getString("name");
                 String type = rs.getString("type");
-                // Carregar permissões, se necessário
-                return new UserProfile(profileId, name, type, loadPermissions(profileId));
+                UserProfile userProfile = new UserProfile(profileTypeId, name, type);
+                return userProfile;
             } else {
-                throw new IllegalArgumentException("Profile not found!");
+                throw new IllegalArgumentException("Perfil não encontrado!");
             }
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
+    }
+    
+    private User getUserById(int id) {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return new User(
+                    rs.getInt("id"),
+                    rs.getString("email"),
+                    rs.getString("password_hash"),
+                    rs.getString("name"),
+                    getUserProfile(rs.getInt("profile_type_id")) // Obtendo perfil do banco de dados
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
     private List<String> loadPermissions(int profileId) {
@@ -144,18 +165,25 @@ public class UserRepository {
     // M�todo para listar todos os usu�rios
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM User";
+        String sql = "SELECT * FROM users";
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
+
             while (rs.next()) {
-                String id = rs.getString("id");
+                int id = rs.getInt("id");
                 String email = rs.getString("email");
                 String passwordHash = rs.getString("password_hash");
                 String name = rs.getString("name");
-                UserProfileType profile = UserProfileType.valueOf(rs.getString("profile")); // Convertendo String para enum
-                users.add(new User(id, email, passwordHash, name, profile));
+                int profileTypeId = rs.getInt("profile_type_id"); // Obtendo o ID do tipo de perfil
+
+                // Recuperar o perfil do usuário usando o ID do tipo de perfil
+                UserProfile profile = getUserProfile(profileTypeId);
+
+                // Criar o objeto User e adicioná-lo à lista
+                User user = new User(id, email, passwordHash, name, profile);
+                users.add(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();

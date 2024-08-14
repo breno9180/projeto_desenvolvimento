@@ -61,19 +61,19 @@ public class User {
     	if(existingUser(users, email)) {
     		throw new IllegalArgumentException("User already registered with this email!");
     	}
-    	User newUser = new User(id, name, email, passwordHash, profile);
+    	User newUser = new User(id, email, passwordHash, name, profile);
     	users.add(newUser);
     	return newUser;
     }
     
-    public static User readUser(List<User> users, String id) {
-    	return users.stream()
-    			.filter(user -> user.getId().equals(id))
-    			.findFirst()
-    			.orElseThrow(() -> new IllegalArgumentException("User not found!"));
+    public static User readUser(List<User> users, int id) {
+        return users.stream()
+                .filter(user -> user.getId() == id)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("User not found!"));
     }
     
-    public static User updateUser(List<User> users, String id, String newName, String newEmail, String newPassword) {
+    public static User updateUser(List<User> users, int id, String newName, String newEmail, String newPassword) {
     	User user = readUser(users, id);
     	if(!user.getEmail().equals(newEmail) && existingUser(users, newEmail)) {
     		throw new IllegalArgumentException("Another user is already registered with this email!");
@@ -84,7 +84,7 @@ public class User {
     	return user;
     }
     
-    public static void deleteUser(List<User> users, String id) {
+    public static void deleteUser(List<User> users, int id) {
     	User user = readUser(users, id);
     	users.remove(user);
     }
