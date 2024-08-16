@@ -48,15 +48,15 @@ public class PostageShipping {
         return weightCalculation;
     }
 
+    public double getValueFinalDelivery() {
+        return valueFinalDelivery;
+    }
+    
     public void setWeightCalculation(double weightCalculation) {
         this.weightCalculation = weightCalculation;
         this.freight.setWeight(weightCalculation);
         this.freight.setTypeVehicles(typeVehicle);
         this.valueFinalDelivery = calculateFinalValueDelivery();
-    }
-    
-    public double getValueFinalDelivery() {
-        return valueFinalDelivery;
     }
     
     public void setDistanceKm(double distanceKm) {
@@ -78,5 +78,4 @@ public class PostageShipping {
                 ", valueFinalDelivery=" + valueFinalDelivery +
                 '}';
     }
-
 }

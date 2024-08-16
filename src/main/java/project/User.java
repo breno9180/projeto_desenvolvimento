@@ -93,12 +93,3 @@ public class User {
     	return users.stream().anyMatch(user -> user.getEmail().equals(email));
     }
 }
-
-
-
-
-
-
-
-
-

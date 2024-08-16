@@ -14,7 +14,7 @@ public class Program {
         UserProfile profile = userRepository.getUserProfile(3); // Usando o ID de Cliente
 
         // Crie um novo usuário com o perfil existente
-        User newUser = new User(3, "cliente@example.com", "cliente_password_hash", "João Cliente", profile);
+        User newUser = new User(4, "cliente2@example.com", "cliente_password_hash", "Raquel Cliente", profile);
 
         // Adicione o usuário ao repositório
         userRepository.createUser(newUser);

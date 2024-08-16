@@ -117,7 +117,6 @@ public class Freight {
 		this.valueDelivery = valueShipping - rate;
 	}
 	
-    
 	public static Freight createShipping(List<Freight> freights, String id, double weight, double distance, String typeVehicle) {
 		if (shippingExisting(freights, id)) {
 			throw new IllegalArgumentException("Shipping already registered!");
@@ -169,5 +168,4 @@ public class Freight {
 	private static boolean shippingExisting(List<Freight> freights, String id) {
         return freights.stream().anyMatch(freight -> freight.getId().equals(id));
     }
-    
 }    

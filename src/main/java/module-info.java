@@ -6,6 +6,7 @@ module projeto_desenvolvimento {
 
     // Requer m�dulos necess�rios
     requires java.sql;
+	requires javax.faces.api;
 
     // Permite que JUnit acesse o pacote para testes
 }

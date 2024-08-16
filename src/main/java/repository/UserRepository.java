@@ -14,7 +14,6 @@ import project.UserProfile;
 import project.UserProfileType;
 
 public class UserRepository {
-    // M�todo para obter uma conex�o com o banco de dados
     private Connection getConnection() throws SQLException {
         final String URL = "jdbc:postgresql://glumly-glowing-mink.data-1.use1.tembo.io:5432/postgres";
         final String USER = "postgres";
@@ -22,7 +21,6 @@ public class UserRepository {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    // M�todo para criar um novo usu�rio
     public void createUser(User user) {
         String sql = "INSERT INTO users (id, email, password_hash, profile_type_id, name) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
@@ -67,7 +65,6 @@ public class UserRepository {
         }
     }
 
-    // M�todo para atualizar um usu�rio
     public void updateUser(User user) {
         String sql = "UPDATE users SET email = ?, password_hash = ?, name = ?, profile_type_id = ? WHERE id = ?";
 
@@ -86,7 +83,6 @@ public class UserRepository {
         }
     }
 
-    // M�todo para deletar um usu�rio
     public void deleteUser(int id) {
         String sql = "DELETE FROM users WHERE id = ?";
         
@@ -120,49 +116,6 @@ public class UserRepository {
         }
     }
     
-    private User getUserById(int id) {
-        String sql = "SELECT * FROM users WHERE id = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return new User(
-                    rs.getInt("id"),
-                    rs.getString("email"),
-                    rs.getString("password_hash"),
-                    rs.getString("name"),
-                    getUserProfile(rs.getInt("profile_type_id")) // Obtendo perfil do banco de dados
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    
-    private List<String> loadPermissions(int profileId) {
-        String sql = "SELECT permission FROM user_profile_permissions WHERE profile_id = ?";
-        List<String> permissions = new ArrayList<>();
-
-        try (Connection conn = getConnection(); 
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, profileId);
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                permissions.add(rs.getString("permission"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return permissions;
-    }
-
-    // M�todo para listar todos os usu�rios
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM users";
@@ -176,12 +129,10 @@ public class UserRepository {
                 String email = rs.getString("email");
                 String passwordHash = rs.getString("password_hash");
                 String name = rs.getString("name");
-                int profileTypeId = rs.getInt("profile_type_id"); // Obtendo o ID do tipo de perfil
+                int profileTypeId = rs.getInt("profile_type_id");
 
-                // Recuperar o perfil do usuário usando o ID do tipo de perfil
                 UserProfile profile = getUserProfile(profileTypeId);
 
-                // Criar o objeto User e adicioná-lo à lista
                 User user = new User(id, email, passwordHash, name, profile);
                 users.add(user);
             }

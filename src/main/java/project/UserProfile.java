@@ -36,9 +36,7 @@ public class UserProfile {
     public String getType() {
         return type;
     }
-    
-    // Removed setType as it's not appropriate to change the type after initialization
-    
+ 
     public List<String> getPermissions() {
         return permissions;
     }
